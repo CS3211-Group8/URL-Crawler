@@ -1,3 +1,4 @@
+package UrlCrawler;
 
 public class Url {
 	private String url,linkedUrl;
