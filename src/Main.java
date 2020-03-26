@@ -1,26 +1,23 @@
 package UrlCrawler;
+
 import java.util.*;
-import java.io.*;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class Main {
 	
 	public static void main(String[] args) {
 		
 		Crawler.obj = new Object();
+		Scanner sc = new Scanner(System.in);
 		
 		List<Url> bul1 = Collections.synchronizedList(new LinkedList<Url>());
-		List<Url> bul2 = Collections.synchronizedList(new LinkedList<Url>());
-		List<Url> bul3 = Collections.synchronizedList(new LinkedList<Url>());
+//		List<Url> bul2 = Collections.synchronizedList(new LinkedList<Url>());
+//		List<Url> bul3 = Collections.synchronizedList(new LinkedList<Url>());
 		
 		// Initialize urlList with seed urls
-		Crawler.urlList.add("https://www.baidu.com");
-		Crawler.urlList.add("https://www.google.com");
-		Crawler.urlList.add("https://github.com");
-		Crawler.urlList.add("www.wikipedia.org");
+		while(sc.hasNextLine()){
+			Crawler.urlList.add(sc.nextLine());
+		}
+		sc.close();
 		
 		CrawlingThread ct1 = new CrawlingThread(bul1);
 		IndexBuildingThread ibt1 = new IndexBuildingThread(bul1);
@@ -30,7 +27,6 @@ public class Main {
 		
 		ct.start();
 		ibt.start();
-		
 		
 		
 	}

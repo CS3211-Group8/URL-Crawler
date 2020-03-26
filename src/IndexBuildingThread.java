@@ -20,18 +20,19 @@ public class IndexBuildingThread implements Runnable{
 		String currentUrl;
 		// Get first Url object
 		synchronized(Crawler.obj) {
+			
 			while(bul.isEmpty()) {
 				try {
-					System.out.println("waiting in ibt");
 					Crawler.obj.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("ibt starts");
+			
 			current = bul.remove(0);
 
 		}
+		
 		// check for duplicates; if no duplicates add to hashset and urlList
 		if((current != null) && (!urlSet.contains(current))) {
 			urlSet.add(current);
@@ -42,6 +43,8 @@ public class IndexBuildingThread implements Runnable{
 				Crawler.obj.notify();
 			}
 		}
+		
+		this.run();
 	}
 
 }
