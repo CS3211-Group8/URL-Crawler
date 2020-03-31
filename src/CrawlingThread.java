@@ -92,14 +92,11 @@ public class CrawlingThread implements Runnable {
 					else {
 			            Url link = new Url(currUrl,url);
 			            synchronized(bul) {
-			            	if(!contains(bul,link)) {
-			            		// wait if bul is full
-			                	while(bul.size() == Crawler.BUL_MAX) {
-			                		bul.wait();
-			                	}
-			                	bul.offer(link);
-			                	bul.notify();
-			            	}
+		                	while(bul.size() == Crawler.BUL_MAX) {
+		                		bul.wait();
+		                	}
+		                	bul.offer(link);
+		                	bul.notify();
 			            }
 			            
 					}
@@ -116,26 +113,6 @@ public class CrawlingThread implements Runnable {
 		
 	}
 	
-	
-	/*
-	 * Given BUL and Url object, checks if Url object exists
-	 * in the BUL
-	 */
-	public boolean contains(BlockingQueue<Url> bul, Url url) {
-		
-		boolean contains = false;
-		Iterator<Url> it = bul.iterator();
-		
-		while(it.hasNext()) {
-			boolean check = url.equals(it.next());
-			if(check) {
-				contains = true;
-				break;
-			}
-		}
-	
-		return contains;
-	}
 	
 
 	

@@ -138,13 +138,8 @@ public class Url {
 	
 	public String getHtml() {
 		String url = this.getUrl();
-		String html = null;
+		String html = "";
 		
-		int responseCode = getResponseCode(url);
-		
-		if(responseCode == 404) {
-			url = getRootUrl(url);
-		}
 		
 		try {
 			Document doc = Jsoup.connect(url)

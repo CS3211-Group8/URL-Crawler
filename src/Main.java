@@ -14,9 +14,9 @@ public class Main {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		BlockingQueue<Url> bul1 = new LinkedBlockingQueue<Url>(1000);
-		BlockingQueue<Url> bul2 = new LinkedBlockingQueue<Url>(1000);
-		BlockingQueue<Url> bul3 = new LinkedBlockingQueue<Url>(1000);
+		BlockingQueue<Url> bul1 = new LinkedBlockingQueue<Url>(100);
+		BlockingQueue<Url> bul2 = new LinkedBlockingQueue<Url>(100);
+		BlockingQueue<Url> bul3 = new LinkedBlockingQueue<Url>(100);
 
 		
 		

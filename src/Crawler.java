@@ -7,7 +7,7 @@ import java.util.Set;
 public class Crawler {
 	public static Set<String> urlSet = Collections.synchronizedSet(new HashSet<String>());
 	public static Crawler crawlerObj = new Crawler();
-	public static final int BUL_MAX = 1000;
+	public static final int BUL_MAX = 100;
 	public static int numHours = 0;
 	public static int numUrl = 0;
 	public static long prevTime = System.currentTimeMillis();
