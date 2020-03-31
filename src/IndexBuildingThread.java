@@ -65,17 +65,14 @@ public class IndexBuildingThread implements Runnable{
 			linkedUrl = ((Url)current).getLinkedUrl();
 			domain = ((Url)current).getDomain();
 			html = ((Url)current).getHtml();
-			boolean added = false,exist;
+			boolean added = false;
 			
 			synchronized(IndexedUrlTree.iutObj) {
-				exist = IndexedUrlTree.iutObj.getExists(currentUrl, domain);
-				if(!exist) {
-					added = IndexedUrlTree.iutObj.addNewEntry(currentUrl, domain, html);
-				}
+				added = IndexedUrlTree.iutObj.addNewEntry(currentUrl, domain, html);
 			}
 			
 			synchronized(Crawler.urlSet) {
-				if(!exist) {
+				if(added) {
 					if(!( (currentUrl.equals(linkedUrl)) || (Url.urlObj.urlMatch(currentUrl, linkedUrl)) ) ) {
 						this.urlSet.add(currentUrl);
 					}

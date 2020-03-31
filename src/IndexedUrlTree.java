@@ -11,8 +11,6 @@ public class IndexedUrlTree {
 	public static String prefixIndexDir = System.getProperty("user.dir") + "/prefix_index/";
 	public static String domainIndexDir = System.getProperty("user.dir") + "/domain_index/";
 	public static String htmlDir = System.getProperty("user.dir") + "/html/";
-	public static String crawledDir = System.getProperty("user.dir") + "/crawled/";
-	public static String crawledIndexFile = "crawled.xml";
 	public static IndexedUrlTree iutObj = new IndexedUrlTree("obj");
 	
 	public IndexedUrlTree() {
@@ -20,8 +18,6 @@ public class IndexedUrlTree {
 		initDir(prefixIndexDir);
 		initDir(domainIndexDir);
 		initDir(htmlDir);
-		initDir(crawledDir);
-		initIndexFile(crawledDir + crawledIndexFile);
 		initPrefixMap();
 		
 	}
