@@ -65,25 +65,32 @@ public class IndexBuildingThread implements Runnable{
 			linkedUrl = ((Url)current).getLinkedUrl();
 			domain = ((Url)current).getDomain();
 			html = ((Url)current).getHtml();
-			boolean added;
+			boolean added = false,exist;
 			
 			synchronized(IndexedUrlTree.iutObj) {
-				added = IndexedUrlTree.iutObj.addNewEntry(currentUrl, domain, html);
+				exist = IndexedUrlTree.iutObj.getExists(currentUrl, domain);
+				if(!exist) {
+					added = IndexedUrlTree.iutObj.addNewEntry(currentUrl, domain, html);
+				}
+			}
+			
+			synchronized(Crawler.urlSet) {
+				if(!exist) {
+					if(!( (currentUrl.equals(linkedUrl)) || (Url.urlObj.urlMatch(currentUrl, linkedUrl)) ) ) {
+						this.urlSet.add(currentUrl);
+					}
+				}
 			}
 			
 			if(added) {
 				System.out.println(currentUrl + " --> " + linkedUrl);
 			}
 			
-			synchronized(Crawler.urlSet) {
-				if(!( (currentUrl.equals(linkedUrl)) || (Url.urlObj.urlMatch(currentUrl, linkedUrl)) || (currentUrl.equals(linkedUrl)) ) ) {
-					this.urlSet.add(currentUrl);
-				}
-			}
-			
-			
 			long t2 = System.currentTimeMillis();
 			synchronized(Crawler.crawlerObj) {
+				if(added) {
+					(Crawler.numUrl)++;
+				}
 				if((t2 - Crawler.prevTime) >= 3600000) {
 					(Crawler.numHours)++;
 					Crawler.prevTime = t2;
