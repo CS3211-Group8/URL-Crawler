@@ -66,15 +66,22 @@ public class CrawlingThread implements Runnable {
 		
 		if(responseCode == 404) {
 			url = Url.urlObj.getRootUrl(url);
+			responseCode = Url.urlObj.getResponseCode(url);
+			if(responseCode == 404) {
+				responseCode = 0;
+			}
 		}
 
 		if(responseCode != 0) {
+			
 			try{
 				// Obtain and parse html; 
 				Document doc = Jsoup.connect(url).ignoreHttpErrors(true).get();
 				Elements linkedUrls = doc.select("a[href]");
 				for (Element page : linkedUrls) {
 					String currUrl = page.attr("abs:href");
+					
+
 					if((currUrl.equals(""))) {
 						continue;
 					}
@@ -94,16 +101,18 @@ public class CrawlingThread implements Runnable {
 			                	bul.notify();
 			            	}
 			            }
+			            
 					}
 				}
+				
 			} catch(IOException e) {
 				System.err.println(e.getMessage());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
-		
 		
 	}
 	
@@ -127,5 +136,7 @@ public class CrawlingThread implements Runnable {
 	
 		return contains;
 	}
+	
+
 	
 }

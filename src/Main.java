@@ -1,6 +1,5 @@
 package UrlCrawler;
 
-
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,26 +27,6 @@ public class Main {
 		}
 		sc.close();
 		
-//		int responseCode = 0;
-//		String url = "mailto:info@allstarsmedios.com";
-//		
-//		try {
-//			URL urlObj = new URL(url);
-//			HttpURLConnection huc = (HttpURLConnection) urlObj.openConnection();
-//			huc.setRequestMethod("HEAD");
-//			responseCode = huc.getResponseCode();
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			System.err.println("Malformed Url For url: " + url + ",");
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			System.err.println("For url: " + url + ",");
-//			e.printStackTrace();
-//		} 
-//		
-//		
-//		System.out.println(responseCode);
 		
 		CrawlingThread ct1 = new CrawlingThread(bul1);
 		CrawlingThread ct2 = new CrawlingThread(bul1);

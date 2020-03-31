@@ -101,7 +101,8 @@ public class Url {
 	public void setDomain() {
 			
 		String url = this.getUrl();
-		String domainVal = url;
+		String domainVal = "";
+		url = url.replace(" ", "_");
 		
 		try {
 			URI uri = new URI(url);
@@ -114,6 +115,25 @@ public class Url {
 		}
 		
 		this.domain = domainVal;
+	}
+	
+	
+	public String getDomain(String url) {
+		
+		String domainVal = "";
+		url = url.replace(" ", "_");
+		
+		try {
+			URI uri = new URI(url);
+			domainVal = uri.getHost();														// www.google.com
+			domainVal = domainVal.startsWith("www.") ? domainVal.substring(4) : domainVal;	// google.com
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			System.err.println("For url: " + url + ",");
+			e.printStackTrace();
+		}
+		
+		return domainVal;
 	}
 	
 	public String getHtml() {

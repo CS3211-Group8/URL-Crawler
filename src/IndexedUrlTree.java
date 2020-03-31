@@ -11,6 +11,8 @@ public class IndexedUrlTree {
 	public static String prefixIndexDir = System.getProperty("user.dir") + "/prefix_index/";
 	public static String domainIndexDir = System.getProperty("user.dir") + "/domain_index/";
 	public static String htmlDir = System.getProperty("user.dir") + "/html/";
+	public static String crawledDir = System.getProperty("user.dir") + "/crawled/";
+	public static String crawledIndexFile = "crawled.xml";
 	public static IndexedUrlTree iutObj = new IndexedUrlTree("obj");
 	
 	public IndexedUrlTree() {
@@ -18,6 +20,8 @@ public class IndexedUrlTree {
 		initDir(prefixIndexDir);
 		initDir(domainIndexDir);
 		initDir(htmlDir);
+		initDir(crawledDir);
+		initIndexFile(crawledDir + crawledIndexFile);
 		initPrefixMap();
 		
 	}
@@ -137,9 +141,14 @@ public class IndexedUrlTree {
 		domainMap = getMap(prefixPath);
 		
 		if(!domainMap.containsKey(domain)) {
+			int domainLen = domain.length();
+			if(domainLen > 251) {					// to adhere to linux file naming standards
+				domain = domain.substring(0, 251);
+			}
 			domainFile = domain + ".xml";			// map value
 			domainMap.put(domain, domainFile);
 			setIndexHashMap(domainMap,prefixPath);
+			domainMap.clear();
 		}
 		else {
 			domainFile = domainMap.get(domain);			// abc.com.xml (map value)
@@ -153,6 +162,11 @@ public class IndexedUrlTree {
 		if(!urlMap.containsKey(url)) {
 			htmlFile = url.replace("://", "--");
 			htmlFile = htmlFile.replace("/", "-");
+			htmlFile = htmlFile.replace(" ","_");
+			int htmlLen = htmlFile.length();
+			if(htmlLen > 255) {							// to adhere to linux naming conventions
+				htmlFile = htmlFile.substring(0, 255);
+			}
 			htmlPath = htmlDir + htmlFile;
 			initHtmlFile(htmlPath, html);
 			urlMap.put(url, htmlPath);
@@ -238,6 +252,35 @@ public class IndexedUrlTree {
 		
 			
 	}
+	
+	public boolean getExists(String url,String domain) {
+		
+		boolean exist = false;
+		
+		String urlPrefix = domain.substring(0, 1);
+		HashMap<String,String> domainMap,urlMap;
+		String prefixFile,domainFile,prefixPath,domainPath;
+		
+		
+		prefixFile = getPrefixFile(urlPrefix);		// a*.xml
+		prefixPath = prefixIndexDir + prefixFile;	// .../prefix_index/a*.xml
+		
+		domainMap = getMap(prefixPath);
+		
+		if(domainMap.containsKey(domain)) {
+			domainFile = domainMap.get(domain);			// abc.com.xml (map value)
+			domainPath = domainIndexDir + domainFile;		// .../domain_index/abc.com.xml
+			
+			urlMap = getMap(domainPath);
+			
+			if(urlMap.containsKey(url)) {
+				exist = true;
+			}
+		}
+		
+		return exist;
+	}
+	
 	
     
 }
