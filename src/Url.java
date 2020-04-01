@@ -1,6 +1,9 @@
 package UrlCrawler;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -44,6 +47,7 @@ public class Url {
 	public int getResponseCode(String url) {
 		   
 	   int responseCode = 0;
+	   CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 		
 		try {
 			URL urlObj = new URL(url);
@@ -73,6 +77,10 @@ public class Url {
 	public String getRootUrl(String url) {
 			
 		String rootUrl = url;
+		url = url.replace(" ", "_");
+		url = url.replace("{", "(");
+		url = url.replace("}", ")");
+		url = url.replace("%", "/");
 		
 		try {
 			URI uri = new URI(url);
@@ -103,6 +111,9 @@ public class Url {
 		String url = this.getUrl();
 		String domainVal = "";
 		url = url.replace(" ", "_");
+		url = url.replace("{", "(");
+		url = url.replace("}", ")");
+		url = url.replace("%", "/");
 		
 		try {
 			URI uri = new URI(url);
@@ -118,24 +129,6 @@ public class Url {
 	}
 	
 	
-	public String getDomain(String url) {
-		
-		String domainVal = "";
-		url = url.replace(" ", "_");
-		
-		try {
-			URI uri = new URI(url);
-			domainVal = uri.getHost();														// www.google.com
-			domainVal = domainVal.startsWith("www.") ? domainVal.substring(4) : domainVal;	// google.com
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			System.err.println("For url: " + url + ",");
-			e.printStackTrace();
-		}
-		
-		return domainVal;
-	}
-	
 	public String getHtml() {
 		String url = this.getUrl();
 		String html = "";
@@ -143,6 +136,7 @@ public class Url {
 		
 		try {
 			Document doc = Jsoup.connect(url)
+					.ignoreContentType(true)
 					.ignoreHttpErrors(true)
 					.get();
 			html = doc.html();
