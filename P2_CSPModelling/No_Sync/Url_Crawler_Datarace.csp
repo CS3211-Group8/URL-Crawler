@@ -1,0 +1,46 @@
+﻿#import "Array2";
+#import "List2";
+
+// Number Per Thread
+#define NUM_BUL 2;
+#define NUM_CT 2;
+#define NUM_IBT 2;
+
+#define URL_SIZE 4;
+#define MAX_URL_VAL 10;
+#define BUL_SIZE 1;
+
+// Initialise fixed size of seed urls
+//var seedUrlArr = call(InitRandom,URL_SIZE,MAX_URL_VAL+1);
+var seedUrlArr[URL_SIZE] = [1,2,1,7];
+var<List> seedUrlList = new List(seedUrlArr);
+channel urlList URL_SIZE;
+var seedUrl;
+// Shared BUL
+channel bul[NUM_BUL] BUL_SIZE;
+var bulIndexArr = call(InitIndex, NUM_BUL, NUM_CT);
+var bulIndexList = new List(bulIndexArr);
+// CT variables
+var url[NUM_CT*NUM_BUL];
+var newUrl[NUM_CT*NUM_BUL];
+// IBT variables
+var<List> iut = new List();
+
+var flag = true;
+#define goal (flag == iut.IsDuplicate());
+
+UrlInit(i) = if(i<=URL_SIZE){get{seedUrl = seedUrlList.GetUrl(0)} -> urlList!seedUrl -> UrlInit(i+1)}else{Skip};
+
+CrawlingThread(i) = if(!call(cempty,urlList)){urlList?toCrawl{url[i] = toCrawl} -> crawl.i{newUrl[i] = url[i]} -> bul[bulIndexList.Get(i)]!newUrl[i] -> CrawlingThread(i)}else{CrawlingThread(i)};
+
+IBTWrites(i) = if(!iut.Contains(i)){index{iut.Add(i)} -> urlListWriter -> Skip}else{Skip};IBTSystem;
+
+IndexBuildingThread(i) = if(!call(cempty,bul[i])){bul[i]?crawled -> IBTWrites(crawled)}else{IndexBuildingThread(i)};
+
+IBTSystem = |||x:{0..NUM_IBT-1}@IndexBuildingThread(x);
+CTSystem = |||x:{0..(NUM_CT*NUM_BUL)-1}@CrawlingThread(x);
+System = UrlInit(1);((CTSystem) ||| (IBTSystem));
+
+
+#assert System deadlockfree;
+#assert System reaches goal;
