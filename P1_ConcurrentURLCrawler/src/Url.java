@@ -12,6 +12,7 @@ import java.net.URL;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 public class Url {
 	private String url,linkedUrl,domain;
@@ -80,7 +81,15 @@ public class Url {
 		url = url.replace(" ", "_");
 		url = url.replace("{", "(");
 		url = url.replace("}", ")");
+		url = url.replace("[", "(");
+		url = url.replace("]", ")");
 		url = url.replace("%", "/");
+		url = url.replace("|", "-");
+		url = url.replace("#", "-");
+		url = url.replace("`", "-");
+		url = url.replace("^", "-");
+		url = url.replace("<", "-");
+		url = url.replace(">", "-");
 		
 		try {
 			URI uri = new URI(url);
@@ -113,7 +122,15 @@ public class Url {
 		url = url.replace(" ", "_");
 		url = url.replace("{", "(");
 		url = url.replace("}", ")");
+		url = url.replace("[", "(");
+		url = url.replace("]", ")");
 		url = url.replace("%", "/");
+		url = url.replace("|", "-");
+		url = url.replace("#", "-");
+		url = url.replace("`", "-");
+		url = url.replace("^", "-");
+		url = url.replace("<", "-");
+		url = url.replace(">", "-");
 		
 		try {
 			URI uri = new URI(url);
@@ -165,6 +182,45 @@ public class Url {
 		}
 		
 		return match;
+	}
+	
+	/*
+	 * Given url, execute crawling of url.
+	 */
+	public Elements getCrawled(String url) {
+		
+		Elements linkedUrls = new Elements();
+		
+		Document doc;
+		try {
+			doc = Jsoup.connect(url).ignoreHttpErrors(true).get();
+			linkedUrls = doc.select("a[href]");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		
+		return linkedUrls;
+	}
+	
+	
+	/*
+	 * Given url, returns boolean if it is able to be crawled
+	 */
+	public boolean isCrawlable(String url) {
+		boolean crawlable = false;
+		
+		Elements linkedUrls = Url.urlObj.getCrawled(url);
+		crawlable = linkedUrls.size() == 0 ? false : true;
+		
+		if(!crawlable) {
+			url = Url.urlObj.getRootUrl(url);
+			linkedUrls = Url.urlObj.getCrawled(url);
+			crawlable = linkedUrls.size() == 0 ? false : true;
+		}		
+		
+		return crawlable;		
 	}
 	
 }

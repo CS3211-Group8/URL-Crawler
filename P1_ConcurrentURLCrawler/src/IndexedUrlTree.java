@@ -122,13 +122,14 @@ public class IndexedUrlTree {
 	/*
 	 * Add New Entry to IUT
 	 * Takes Url Object as argument
+	 * Returns html path of crawled url
+	 * Return empty string if url already exists
 	 */
-	public boolean addNewEntry(String url,String domain, String html) {
+	public String addNewEntry(String url,String domain, String html,boolean crawlable) {
 		
-		boolean added = false;
 		String urlPrefix = domain.substring(0, 1);
 		HashMap<String,String> domainMap,urlMap;
-		String prefixFile,domainFile,prefixPath,domainPath, htmlPath, htmlFile;
+		String prefixFile,domainFile,prefixPath,domainPath, htmlPath = "", htmlFile;
 		
 		
 		prefixFile = getPrefixFile(urlPrefix);		// a*.xml
@@ -156,6 +157,7 @@ public class IndexedUrlTree {
 		urlMap = getMap(domainPath);
 		
 		if(!urlMap.containsKey(url)) {
+			
 			htmlFile = url.replace("://", "--");
 			htmlFile = htmlFile.replace("/", "-");
 			htmlFile = htmlFile.replace(" ","_");
@@ -164,14 +166,23 @@ public class IndexedUrlTree {
 				htmlFile = htmlFile.substring(0, 255);
 			}
 			htmlPath = htmlDir + htmlFile;
-			initHtmlFile(htmlPath, html);
 			urlMap.put(url, htmlPath);
 			setIndexHashMap(urlMap,domainPath);
-			added = true;
-		
+			if(crawlable) {
+				if(Crawler.numStored < Crawler.STORED_PAGE_NUM) {
+					initHtmlFile(htmlPath, html);
+					(Crawler.numStored)++;
+				} else {
+					htmlPath = "ignored";
+				}
+			}
+			else {
+				htmlPath = "dead-url";
+			}
+				
 		}
 		
-		return added;
+		return htmlPath;
 	}
         
        
