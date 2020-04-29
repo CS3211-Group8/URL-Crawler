@@ -20,6 +20,13 @@ public class IndexBuildingThread implements Runnable{
 			
 			tempBul = getTempBul();
 			indexUrls(tempBul);
+			
+			synchronized(Crawler.crawlerObj) {
+				if(Crawler.numHours == Crawler.TIME_MAX) {
+					System.out.println("Program terminating...");
+					System.exit(0);
+				}
+			}
 	
 		}
 	}
@@ -41,6 +48,7 @@ public class IndexBuildingThread implements Runnable{
 					e.printStackTrace();
 				}
 			}
+
 			tempBul =  bul.toArray();
 			bul.clear();
 			bul.notifyAll();
@@ -65,36 +73,39 @@ public class IndexBuildingThread implements Runnable{
 			linkedUrl = ((Url)current).getLinkedUrl();
 			domain = ((Url)current).getDomain();
 			html = ((Url)current).getHtml();
-			boolean added = false;
+			String htmlPath = "";
+			String outputStr = "";
+			boolean crawlable = false;
 			
-			synchronized(IndexedUrlTree.iutObj) {
-				added = IndexedUrlTree.iutObj.addNewEntry(currentUrl, domain, html);
-			}
+			crawlable = ((Url)current).isCrawlable(currentUrl);
 			
-			synchronized(Crawler.urlSet) {
-				if(added) {
-					if(!( (currentUrl.equals(linkedUrl)) || (Url.urlObj.urlMatch(currentUrl, linkedUrl)) ) ) {
-						this.urlSet.add(currentUrl);
-					}
-				}
-			}
-			
-			if(added) {
-				System.out.println(currentUrl + " --> " + linkedUrl);
-			}
-			
-			long t2 = System.currentTimeMillis();
 			synchronized(Crawler.crawlerObj) {
-				if(added) {
-					(Crawler.numUrl)++;
+				synchronized(IndexedUrlTree.iutObj) {
+					htmlPath = IndexedUrlTree.iutObj.addNewEntry(currentUrl, domain, html,crawlable);
 				}
+			
+				if(!htmlPath.equals("")) {
+					(Crawler.numUrl)++;
+					htmlPath = " : " + htmlPath;
+					if(crawlable) {
+						synchronized(Crawler.urlSet) {
+							if(!( (currentUrl.equals(linkedUrl)) || (Url.urlObj.urlMatch(currentUrl, linkedUrl)) ) ) {
+								this.urlSet.add(currentUrl);
+							}
+						}
+					}
+					outputStr = currentUrl + " --> " + linkedUrl + htmlPath;
+					Crawler.crawlerObj.recordHtml(outputStr);
+				}
+					
+				long t2 = System.currentTimeMillis();
 				if((t2 - Crawler.prevTime) >= 3600000) {
 					(Crawler.numHours)++;
 					Crawler.prevTime = t2;
-					System.out.println(Crawler.numUrl + " Urls crawled after " + Crawler.numHours + " hours");
+					System.out.println(Crawler.numUrl + " Urls crawled in " + Crawler.numHours + "hour(s).");
 				}
+				
 			}
-			
 		}
 		
 	}
