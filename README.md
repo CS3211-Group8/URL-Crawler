@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 The only requirement prior to executing the programs would be to set up the required jar file and the seed URL file to be taken as input.
 
 1. Under the P1_ConcurrentURLCrawler/jar/ folder, extract the crawler.jar file.
-2. Ensure that the seed url input file is named to seed.txt.
+2. Ensure that the seed url input file is named seed.txt.
 3. Place the compiled crawler.jar file along with the seed.txt file into an empty directory or local folder.
 
 ## Execution
