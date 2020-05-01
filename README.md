@@ -26,7 +26,3 @@ java -jar crawler.jar -input seed.txt -output res.txt -time 24h -storedPageNum 1
 
 ## Results
 The list of crawled URLs will be indicated in the res.txt file while the HTMLs will be stored in the folder, html/.
-
-
-
-
